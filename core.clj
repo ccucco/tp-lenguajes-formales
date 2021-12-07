@@ -106,6 +106,10 @@
 (declare procesar-expresion-if)
 (declare all-true?)
 (declare aplicar-restaurar-bool)
+(declare procesar-igual-list)
+(declare verificar-si-es-quote)
+(declare procesar-evaluar-multiple)
+(declare procesar-set)
 
 
 (defn -main
@@ -1046,11 +1050,6 @@
 ; user=> (evaluar-define '(define 2 x) '(x 1))
 ; ((;ERROR: define: bad variable (define 2 x)) (x 1))
 
-(defn procesar-evaluar-multiple[expre amb](
-  evaluar-define (reduce concat (list (list (first expre)) (list (first (rest expre))) (list (concat (rest (rest expre)))))) amb
-))
-
-
 (defn evaluar-define
   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
   [expre amb](
@@ -1115,10 +1114,6 @@
 ; ((;ERROR: set!: missing or extra expression (set! x 1 2)) (x 0))
 ; user=> (evaluar-set! '(set! 1 2) '(x 0))
 ; ((;ERROR: set!: bad variable 1) (x 0))
-(defn procesar-set[expre amb](
-  let [eval (aplicar-funcion-primitiva (first expre) (rest expre) amb)]
-  (if (seq? eval) (if (error? (first eval)) expre eval) eval)
-))
 
 (defn evaluar-set!
   "Evalua una expresion `set!`. Devuelve una lista con el resultado y un ambiente actualizado con la redefinicion."
@@ -1169,14 +1164,6 @@
             (>= (first x) (first (rest x)))
         :else
             (and (>= (first x) (first (rest x)))  (procesar-mayor-o-igual (rest x)) )
-))
-
-(defn test-igual[x y](
-  igual? x y
-))
-
-(defn procesar-igual-list[x y](
-  all-true? (map test-igual x y)
 ))
 
 (defn procesar-igual [x](
@@ -1277,12 +1264,6 @@
     :else (first (evaluar-escalar (first expre) amb))
 ))
 
-(defn verificar-si-es-quote[expre](
-  cond
-    (and (seq? expre) (igual? (first expre) 'quote)) (second expre)
-    :else expre
-))
-
 (defn procesar-evaluar-define-symbol [expre amb](
   list (symbol "#<unspecified>") (actualizar-amb amb (first (rest expre)) (verificar-si-es-quote (last expre)))
 ))
@@ -1324,6 +1305,25 @@
   (symbol? expre) (symbol (clojure.string/replace expre #"%" "#"))
   (seq? expre) (map aplicar-restaurar-bool expre)
   :else (clojure.string/replace expre #"%" "#")
+))
+
+(defn procesar-igual-list[x y](
+  all-true? (map igual? x y)
+))
+
+(defn verificar-si-es-quote[expre](
+  cond
+    (and (seq? expre) (igual? (first expre) 'quote)) (second expre)
+    :else expre
+))
+
+(defn procesar-evaluar-multiple[expre amb](
+  evaluar-define (reduce concat (list (list (first expre)) (list (first (rest expre))) (list (concat (rest (rest expre)))))) amb
+))
+
+(defn procesar-set[expre amb](
+  let [eval (aplicar-funcion-primitiva (first expre) (rest expre) amb)]
+  (if (seq? eval) (if (error? (first eval)) expre eval) eval)
 ))
 
 ; Al terminar de cargar el archivo en el REPL de Clojure, se debe devolver true.
