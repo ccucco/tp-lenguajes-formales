@@ -1268,8 +1268,14 @@
     :else (first (evaluar-escalar (first expre) amb))
 ))
 
+(defn verificar-si-es-quote[expre](
+  cond
+    (igual? (first expre) 'quote) (second expre)
+    :else expre
+))
+
 (defn procesar-evaluar-define-symbol [expre amb](
-  list (symbol "#<unspecified>") (actualizar-amb amb (first (rest expre)) (last expre))
+  list (symbol "#<unspecified>") (actualizar-amb amb (first (rest expre)) (verificar-si-es-quote (last expre)))
 ))
 
 (defn procesar-evaluar-define-list [expre amb](
