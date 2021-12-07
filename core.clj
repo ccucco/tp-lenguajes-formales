@@ -826,7 +826,7 @@
   "Devuelve la lectura de un elemento de Scheme desde la terminal/consola."
   [expre](
     cond
-      (= 0 (count expre)) (symbol (leer-entrada))
+      (= 0 (count expre)) (restaurar-bool(read-string (proteger-bool-en-str (leer-entrada))))
       (= 1 (count expre)) (generar-mensaje-error :io-ports-not-implemented 'read)
       :else (generar-mensaje-error :wrong-number-args-prim-proc 'read)
   )
