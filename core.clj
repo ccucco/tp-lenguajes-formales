@@ -712,13 +712,6 @@
 ; user=> (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") )
 ; (and (or #F #f #t #T) #T)
 
-(defn aplicar-restaurar-bool[expre](
-  cond
-  (symbol? expre) (symbol (clojure.string/replace expre #"%" "#"))
-  (seq? expre) (map aplicar-restaurar-bool expre)
-  :else (clojure.string/replace expre #"%" "#")
-))
-
 (defn restaurar-bool
   "Cambia, en un codigo leido con read-string, %t por #t y %f por #f (y sus respectivas versiones en mayusculas)."
   [expre](
