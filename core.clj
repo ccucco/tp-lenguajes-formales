@@ -764,7 +764,7 @@
 ; (;ERROR: append: Wrong type in arg A)
 (defn fnc-append
   "Devuelve el resultado de fusionar listas."
-  [x](
+  [x](spy "RESULT-APPEND" (
       cond
         (= 0 (count (spy "APPEND" x))) 
             x
@@ -778,7 +778,7 @@
                 )
             )
   )
-)
+))
 
 ; user=> (fnc-equal? ())
 ; #t
@@ -798,9 +798,9 @@
 ; #f
 (defn fnc-equal?
   "Compara elementos. Si son iguales, devuelve #t. Si no, #f."
-  [x](
+  [x](spy "RESULT" (
       cond
-        (>= 1 (count x)) 
+        (>= 1 (count (spy "EQUAL?" x))) 
             (symbol "#t")
         :else
             (try 
@@ -809,7 +809,7 @@
                     (symbol "#f")
                 )
             )
-  )
+  ))
 )
 
 ; user=> (fnc-read ())
@@ -1270,7 +1270,7 @@
 
 (defn verificar-si-es-quote[expre](
   cond
-    (igual? (first expre) 'quote) (second expre)
+    (and (seq? expre) (igual? (first expre) 'quote)) (second expre)
     :else expre
 ))
 
@@ -1281,7 +1281,7 @@
 (defn procesar-evaluar-define-list [expre amb](
   cond
     (= 0 (count (first (rest expre)))) (list (generar-mensaje-error :bad-variable 'define expre) amb)
-    :else (list (symbol "#<unspecified>") (actualizar-amb amb (first (first (rest expre)))  (list 'lambda (rest (first (rest expre))) (last expre))))
+    :else (list (symbol "#<unspecified>") (actualizar-amb amb (first (first (rest expre))) (list 'lambda (rest (first (rest expre))) (last expre)) ) )
 ))
 
 (defn procesar-expresion-if [expre amb](
