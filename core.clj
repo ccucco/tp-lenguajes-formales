@@ -748,7 +748,7 @@
             (all-true? (map igual? x y))
         :else
             (try 
-                (= (.toUpperCase x) (.toUpperCase y))
+                (=  x y)
                 (catch Exception e
                     false
                 )
@@ -764,9 +764,9 @@
 ; (;ERROR: append: Wrong type in arg A)
 (defn fnc-append
   "Devuelve el resultado de fusionar listas."
-  [x](spy "RESULT-APPEND" (
+  [x](
       cond
-        (= 0 (count (spy "APPEND" x))) 
+        (= 0 (count x)) 
             x
         (= 1 (count x)) 
             (if (seq? (first x)) (first x) (generar-mensaje-error :wrong-type-arg 'append (getNotListParam x)))
@@ -778,7 +778,7 @@
                 )
             )
   )
-))
+)
 
 ; user=> (fnc-equal? ())
 ; #t
@@ -798,9 +798,9 @@
 ; #f
 (defn fnc-equal?
   "Compara elementos. Si son iguales, devuelve #t. Si no, #f."
-  [x](spy "RESULT" (
+  [x](
       cond
-        (>= 1 (count (spy "EQUAL?" x))) 
+        (>= 1 (count x)) 
             (symbol "#t")
         :else
             (try 
@@ -809,7 +809,7 @@
                     (symbol "#f")
                 )
             )
-  ))
+  )
 )
 
 ; user=> (fnc-read ())
@@ -1171,8 +1171,17 @@
             (and (>= (first x) (first (rest x)))  (procesar-mayor-o-igual (rest x)) )
 ))
 
+(defn test-igual[x y](
+  igual? x y
+))
+
+(defn procesar-igual-list[x y](
+  all-true? (map test-igual x y)
+))
+
 (defn procesar-igual [x](
     cond
+        (seq? (first x)) (procesar-igual-list (first x) (second x))
         (= (count x) 2) 
             (igual? (first x) (first (rest x)))
         :else
