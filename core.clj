@@ -1271,7 +1271,7 @@
 (defn procesar-evaluar-define-list [expre amb](
   cond
     (= 0 (count (first (rest expre)))) (list (generar-mensaje-error :bad-variable 'define expre) amb)
-    :else (list (symbol "#<unspecified>") (actualizar-amb amb (first (first (rest expre))) (list 'lambda (rest (first (rest expre))) (last expre)) ) )
+    :else (list (symbol "#<unspecified>") (actualizar-amb amb (first (first (rest expre))) (if (seq? (first (last expre))) (reduce concat (list 'lambda (rest (first (rest expre)))) (list (last expre))) (list 'lambda (rest (first (rest expre))) (last expre)) )))
 ))
 
 (defn procesar-expresion-if [expre amb](
