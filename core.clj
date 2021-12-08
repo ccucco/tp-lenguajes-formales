@@ -735,10 +735,10 @@
   "Verifica la igualdad entre dos elementos al estilo de Scheme (case-insensitive)"
   [x y](
     cond
+        (and (number? x) (number? y)) 
+            (= x y)
         (not= (type x) (type y))
             false
-        (number? x) 
-            (= x y)
         (symbol? x)
             (= (.toUpperCase (str x)) (.toUpperCase (str y)))
         (seq? x)
