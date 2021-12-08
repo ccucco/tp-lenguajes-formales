@@ -1225,7 +1225,7 @@
 (defn aplicar-busqueda [expre amb](
     cond
     (>= 0 (count amb)) (throw (Exception. ""))
-    (= expre (first (first amb))) (last (first amb))
+    (igual? expre (first (first amb))) (last (first amb))
     :else (aplicar-busqueda expre (rest amb))
 ))
 
@@ -1239,7 +1239,7 @@
 
 (defn procesar-actualizar-existe [amb x y](
   cond
-    (= (first amb) x)  (conj (conj '() y) x)
+    (igual? (first amb) x)  (conj (conj '() y) x)
     :else amb
 ))
 
