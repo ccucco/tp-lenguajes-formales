@@ -1315,8 +1315,11 @@
 ))
 
 (defn procesar-set[expre amb](
-  let [eval (aplicar-funcion-primitiva (first expre) (rest expre) amb)]
-  (if (seq? eval) (if (error? (first eval)) expre eval) eval)
+  cond
+    (not (seq? expre)) expre
+    :else 
+      (let [eval (aplicar-funcion-primitiva (first expre) (rest expre) amb)]
+      (if (seq? eval) (if (error? (first eval)) expre eval) eval))
 ))
 
 ; Al terminar de cargar el archivo en el REPL de Clojure, se debe devolver true.
